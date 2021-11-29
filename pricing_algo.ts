@@ -7,6 +7,7 @@
 3. The price should be doubled every weekend
 4. The end of any given day is 23:59:59 & the start of the next day is 00:00:00
 5. The price should be rounded to 2 decimal places
+6. You may use the library of your choice for data manipulation but DayJS is recommended
 6. Use `ts-node pricing_algo` to run the pricing algorithm
 */
 
