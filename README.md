@@ -16,23 +16,21 @@
 
 - Implement & use [graphql-request](https://github.com/prisma-labs/graphql-request) to interact with with the GraphQL API
 
-- Setup a middleware using middy that validates firebase auth token for each request using the [firebase admin library](https://firebase.google.com/docs/admin/setup).
+- Setup middlewares using middy that would commonly be used for security, logging & data validation.
 
-- Setup all other middleware that would commonly be used such as for security, logging & data validation.
+- Complete the `pricing_algo.ts` script and make it accessible through an API.
 
-- The backend should provide services that will allow users to sign up a profile that consists of `name` and `date of birth` which would authenticate with firebase authentication using the [firebase admin library](https://firebase.google.com/docs/admin/setup). Profile data should be stored on the database.
+- Create a `blog` table with a thousand generated articles that consist of a `title`, `content`, `author`, `create_at`, `updated_at`.
 
-- Create a blog service that allows the creation and management of blog articles. All API routes of the blog service should be protected and only accessible through the `admin` role.
+- Develop a public API route that returns a paginated list of blog articles using GraphQL Relay Cursor-based pagination method.
 
-- A public API route should be provided that returns a paginated list of blog articles using GraphQL Relay Cursor-based pagination method.
-
-- Implement full text search with Hasura GraphQL API and Postgres for all blogs where their title & content are searchable
+- Implement full-text search with Hasura GraphQL API and Postgres for all blogs where their title & content are searchable
 
 - Deploy each route to its own Lambda function using the Serverless Framework.
 
 ## Extra Points
 
-- Implement code/typescript generation base on the GraphQL API
+- Implement code/typescript generation based on the GraphQL API
 
 - Generate an [OpenAPI](https://swagger.io/specification/) documentation for all routes
 
