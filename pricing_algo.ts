@@ -20,8 +20,8 @@ require('datejs');
 
 const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
 
-const isWeekend = () => {
-  switch (new Date().getDay()) {
+const isWeekend = (date: Date = new Date()) => {
+  switch (date.getDate()) {
     case Date.FRIDAY:
     case Date.SATURDAY:
     case Date.SUNDAY:
@@ -31,17 +31,34 @@ const isWeekend = () => {
   }
 };
 
+const computePriceFromHour = (hour: number, pricePerHour: number) => {
+  const fullHours = parseInt(String(hour));
+  const partialHour = hour - fullHours;
+  const pricePerMinute = (partialHour / 100) * pricePerHour;
+  const price = fullHours * pricePerHour + pricePerMinute * 100;
+
+  return Number(price.toFixed(2));
+};
+const getHourDifference = (startDateTime: Date, endDateTime: Date): number => {
+  const hourDiff = Math.abs(endDateTime.getTime() - startDateTime.getTime()) / HOUR_IN_MILLISECONDS;
+  return hourDiff;
+};
+
 const handleOverwritePrice = (arrayList: OverwritePrice[]): OverwritePrice[] | undefined => {
   arrayList.forEach((item: OverwritePrice & { price?: number }) => {
-    const hours = getHoursInRange(item.startDateTime, item.endDateTime);
-    const price = getPriceFromHour(hours, item.pricePerHour);
+    const price = getPrice(item.startDateTime, item.endDateTime, item.pricePerHour);
     item.price = price;
   });
 
   return arrayList;
 };
 
-const getHoursInRange = (startDateTime: Date, endDateTime: Date): number => {
+const getHoursInRange = (
+  startDateTime: Date,
+  endDateTime: Date
+): { normalHours: number; weekendHours: number } => {
+  let numberOfHoursToBeDoubled = 0;
+
   /**
    * Prevent startDateTime from being after endDateTime
    */
@@ -49,24 +66,42 @@ const getHoursInRange = (startDateTime: Date, endDateTime: Date): number => {
     throw new Error(`Start date ${startDateTime} must not before end date ${endDateTime}`);
   }
 
-  // Get time differnence
-  const timediff = Math.abs(endDateTime.getTime() - startDateTime.getTime()) / HOUR_IN_MILLISECONDS;
-  return timediff;
-};
-
-const getPriceFromHour = (hour: number, pricePerHour: number): number => {
-  // Check if hour contains fraction
-
-  const fullHours = parseInt(String(hour));
-  const partialHour = hour - fullHours;
-  const pricePerMinute = (partialHour / 100) * pricePerHour;
-  const price = fullHours * pricePerHour + pricePerMinute * 100;
-
-  if (!isWeekend()) {
-    return Number(price.toFixed(2));
+  // Check if both dates are not weekends
+  if (!isWeekend(startDateTime) && !isWeekend(endDateTime)) {
+    // Get time differnence
+    const hours = Math.abs(endDateTime.getTime() - startDateTime.getTime()) / HOUR_IN_MILLISECONDS;
+    return { normalHours: hours, weekendHours: numberOfHoursToBeDoubled };
   }
 
-  return Number(price.toFixed(2)) * 2;
+  // Either of the dates are weekends
+  if (isWeekend(startDateTime)) {
+    //State date ends
+    const startDateEndsConfig = { hour: 23, minute: 59, second: 59 };
+    const startDateTimeEnds = Date.parse(startDateTime.toString()).at(startDateEndsConfig as any);
+    const hourDiff = getHourDifference(startDateTime, startDateTimeEnds);
+    // Price should be doubled since on a weekend
+    numberOfHoursToBeDoubled = numberOfHoursToBeDoubled + hourDiff;
+  }
+
+  if (isWeekend(endDateTime)) {
+    const endDateStartsConfig = { hour: 0, minute: 0, second: 0 };
+    const endDateTimeStarts = Date.parse(endDateTime.toString()).at(endDateStartsConfig as any);
+    const hourDiff = getHourDifference(endDateTimeStarts, endDateTime);
+    // Price should be doubled since on a weekend
+    numberOfHoursToBeDoubled = numberOfHoursToBeDoubled + hourDiff;
+  }
+
+  // Get time difference
+  const timediff = Math.abs(endDateTime.getTime() - startDateTime.getTime()) / HOUR_IN_MILLISECONDS;
+  return { normalHours: timediff, weekendHours: numberOfHoursToBeDoubled };
+};
+
+const getPrice = (startDateTime: Date, endDateTime: Date, pricePerHour: number): number => {
+  const { normalHours, weekendHours } = getHoursInRange(startDateTime, endDateTime);
+  return (
+    computePriceFromHour(normalHours, pricePerHour) +
+    computePriceFromHour(weekendHours, pricePerHour)
+  );
 };
 
 interface OverwritePrice {
@@ -81,9 +116,7 @@ const pricingAlgo = (
   pricePerHour: number,
   overwritePrice?: OverwritePrice[]
 ): number => {
-  const hours = getHoursInRange(startDateTime, endDateTime);
-
-  const price = getPriceFromHour(hours, pricePerHour);
+  const price = getPrice(startDateTime, endDateTime, pricePerHour);
 
   if (overwritePrice && Array.isArray(overwritePrice)) {
     handleOverwritePrice(overwritePrice);
@@ -98,7 +131,7 @@ const todayEnd = new Date('2021-12-20T00:00:00');
 
 // new Date('2021-11-13T09:24:00'), new Date('2021-11-15T15:13:00')
 
-pricingAlgo(todayStart, todayEnd, 13, [
+const result = pricingAlgo(todayStart, todayEnd, 13, [
   {
     startDateTime: new Date('2021-11-14T12:00:00'),
     endDateTime: new Date('2021-11-14T14:01:00'),
@@ -110,3 +143,5 @@ pricingAlgo(todayStart, todayEnd, 13, [
     pricePerHour: 15.2,
   },
 ]);
+
+console.log(result);
