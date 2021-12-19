@@ -1,0 +1,13 @@
+{
+  "name": "backend-coding-test",
+  "version": "1.0.0",
+  "description": "Middy",
+  "main": "index.js",
+  "repository": "https://github.com/iamNarcisse/backend-coding-test.git",
+  "author": "Narcisse Egonu <mechikaegon@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@middy/core": "^2.5.3",
+    "@types/aws-lambda": "^8.10.88"
+  }
+}
