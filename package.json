@@ -13,7 +13,12 @@
   },
   "dependencies": {
     "@middy/core": "^2.5.3",
-    "@types/aws-lambda": "^8.10.88"
+    "@types/aws-lambda": "^8.10.88",
+    "@types/datejs": "^0.0.31",
+    "apollo-server": "^2",
+    "datejs": "^1.0.0-rc3",
+    "graphql": "^14.6.0",
+    "graphql-request": "^3.7.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.15",
