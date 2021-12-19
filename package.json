@@ -6,8 +6,18 @@
   "repository": "https://github.com/iamNarcisse/backend-coding-test.git",
   "author": "Narcisse Egonu <mechikaegon@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/src/index.js",
+    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' ./src/index.ts"
+  },
   "dependencies": {
     "@middy/core": "^2.5.3",
     "@types/aws-lambda": "^8.10.88"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4"
   }
 }
