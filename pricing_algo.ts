@@ -31,19 +31,16 @@ const isWeekend = () => {
   }
 };
 
-const handleOverwritePrice = (arrayList?: OverwritePrice[]): OverwritePrice[] | undefined => {
-  if (!arrayList || !Array.isArray(arrayList)) {
-    return;
-  }
-
-  arrayList.forEach((item) => {
+const handleOverwritePrice = (arrayList: OverwritePrice[]): OverwritePrice[] | undefined => {
+  arrayList.forEach((item: OverwritePrice & { price?: number }) => {
     const hours = getHoursInRange(item.startDateTime, item.endDateTime);
     const price = getPriceFromHour(hours, item.pricePerHour);
-    item.pricePerHour = price;
+    item.price = price;
   });
 
   return arrayList;
 };
+
 const getHoursInRange = (startDateTime: Date, endDateTime: Date): number => {
   /**
    * Prevent startDateTime from being after endDateTime
@@ -88,7 +85,10 @@ const pricingAlgo = (
 
   const price = getPriceFromHour(hours, pricePerHour);
 
-  handleOverwritePrice(overwritePrice);
+  if (overwritePrice && Array.isArray(overwritePrice)) {
+    handleOverwritePrice(overwritePrice);
+    // console.log(newOverwritePriceList);
+  }
 
   return price;
 };
