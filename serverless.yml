@@ -1,0 +1,32 @@
+# org: iamnarcisse
+# app: stayr-backend-test
+# name: aws-lambda-starter
+# component: aws-lambda
+
+service: serverless-api
+
+provider:
+  name: aws # deploy to AWS
+  stage: dev
+  runtime: nodejs12.x
+  versionFunctions: false # disable function versioning
+  region: us-east-1 # AWS region
+  apiGateway:
+    shouldStartNameWithService: true
+  environment:
+    HASUNA_ENDPOINT: https://moving-platypus-43.hasura.app/v1/graphql
+    HASUNA_SECRET: 6jsfuAHYuwcqKbOVPdnAp2Gxy62cLF8VXdpIcc07Bj5cYRpQY8pv2WnSucUL0ZVq
+
+functions:
+  graphql:
+    handler: src/handler.server
+
+    events:
+      - http:
+          path: graphql
+          method: any
+          cors: true
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-typescript

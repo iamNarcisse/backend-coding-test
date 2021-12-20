@@ -8,26 +8,33 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/src/index.js",
-    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' ./src/index.ts"
+    "start": "node dist/src/handle.js",
+    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' ./src/handle.ts",
+    "start:dev": "sls offline"
   },
   "dependencies": {
     "@middy/core": "^2.5.3",
     "@middy/http-error-handler": "^2.5.3",
     "@middy/http-json-body-parser": "^2.5.3",
+    "@middy/validator": "^2.5.3",
     "@types/aws-lambda": "^8.10.88",
     "@types/datejs": "^0.0.31",
     "@types/faker": "^5.5.9",
     "apollo-server": "^2",
+    "apollo-server-core": "^3.5.0",
+    "apollo-server-lambda": "^3.5.0",
     "datejs": "^1.0.0-rc3",
     "dotenv": "^10.0.0",
     "faker": "^5.5.3",
     "graphql": "^14.6.0",
     "graphql-request": "^3.7.0",
-    "graphql-tag": "^2.12.6"
+    "graphql-tag": "^2.12.6",
+    "graphql-yoga": "^1.18.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.15",
+    "serverless-offline": "^8.3.1",
+    "serverless-plugin-typescript": "^2.1.0",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.4"
   }

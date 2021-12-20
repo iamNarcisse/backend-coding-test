@@ -2,6 +2,7 @@ import { gql } from 'graphql-request';
 import * as faker from 'faker';
 import { client } from './dev-config';
 
+const myclient = client(process.env.HASUNA_ENDPOINT as string, process.env.HASUNA_SECRET as string);
 const query = gql`
   mutation insert_blog($id: uuid, $title: String, $content: String, $author: String) {
     insert_blog(objects: { id: $id, title: $title, content: $content, author: $author }) {
@@ -21,7 +22,7 @@ const seed = () => {
       author: faker.name.firstName(),
     };
 
-    client
+    myclient
       .request(query, variables)
       .then((data) => console.log(data))
       .catch((error) => console.log(error));

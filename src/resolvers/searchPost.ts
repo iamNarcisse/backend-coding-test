@@ -6,6 +6,11 @@ interface SearchPostQuery extends LambdaContext {
   content: string;
 }
 const searchPost = async (parent: any, context: SearchPostQuery) => {
+  const myclient = client(
+    process.env.HASUNA_ENDPOINT as string,
+    process.env.HASUNA_SECRET as string
+  );
+
   try {
     const query = gql`
       query query($title: String!, $content: String!) {
@@ -21,7 +26,8 @@ const searchPost = async (parent: any, context: SearchPostQuery) => {
     `;
 
     const variables = { content: `%${context.content}%`, title: `%${context.title}%` };
-    const response = await client.request(query, variables);
+    const response = await myclient.request(query, variables);
+
     return response.blog;
   } catch (error) {
     throw error;
