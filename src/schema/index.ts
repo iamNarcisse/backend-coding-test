@@ -5,14 +5,15 @@ const typeDefs = gql`
     info: String!
     getPrice(startDateTime: String!, endDateTime: String!, pricePerHour: Int!): Float!
     posts(after: Int!, count: Int!): [Post!]!
-    searchBlog: String!
+    searchPost(title: String!, content: String!): [Post!]
   }
 
   type Post {
+    id: String
     title: String!
-    content: String!
-    author: String!
-    created_at: String!
+    content: String
+    author: String
+    created_at: String
     updated_at: String
   }
 `;
