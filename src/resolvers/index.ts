@@ -4,15 +4,14 @@ import algoResolver from './algo.resolver';
 import searchPostResolver from './searchPost';
 import { customMiddleware } from '../middlewares';
 
-const infoHandler = middy(algoResolver);
+const infoHandler = algoResolver;
 
-const searchHandler = middy(searchPostResolver);
+const searchHandler = middy(searchPostResolver).use(customMiddleware());
 
 const resolvers = {
   Query: {
     getPrice: infoHandler,
     searchPost: searchHandler,
-    info: () => 'Hello',
   },
 };
 

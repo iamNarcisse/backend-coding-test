@@ -13,11 +13,18 @@ const typeDefs = fs.readFileSync(typeDefPath, 'utf8');
 const lambda = new ApolloServer({
   typeDefs,
   resolvers,
+
+  context: ({ event, context, express }) => ({
+    headers: event.headers,
+    functionName: context.functionName,
+    event,
+    context,
+    expressRequest: express.req,
+  }),
+
   plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
 });
 
 const server = lambda.createHandler();
-
-// server.listen().then(({ url }) => console.log(`Server is running on ${url}`));
 
 export { server };

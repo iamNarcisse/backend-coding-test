@@ -17,6 +17,7 @@
     "@middy/http-error-handler": "^2.5.3",
     "@middy/http-json-body-parser": "^2.5.3",
     "@middy/validator": "^2.5.3",
+    "@sentry/serverless": "^6.16.1",
     "@types/aws-lambda": "^8.10.88",
     "@types/datejs": "^0.0.31",
     "@types/faker": "^5.5.9",

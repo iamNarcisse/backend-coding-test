@@ -1,6 +1,6 @@
-# org: iamnarcisse
-# app: stayr-backend-test
-# name: aws-lambda-starter
+org: iamnarcisse
+app: stayr-backend-test
+name: aws-lambda-starter
 # component: aws-lambda
 
 service: serverless-api
@@ -16,15 +16,22 @@ provider:
   environment:
     HASUNA_ENDPOINT: https://moving-platypus-43.hasura.app/v1/graphql
     HASUNA_SECRET: 6jsfuAHYuwcqKbOVPdnAp2Gxy62cLF8VXdpIcc07Bj5cYRpQY8pv2WnSucUL0ZVq
+    SENTRY_DSN: https://0ade560ebdc04f69a305240f7d05b318@o395758.ingest.sentry.io/5841524
 
 functions:
-  graphql:
+  pricing:
     handler: src/handler.server
-
     events:
       - http:
-          path: graphql
-          method: any
+          path: /price
+          method: post
+          cors: true
+  search:
+    handler: src/handler.server
+    events:
+      - http:
+          path: /search
+          method: post
           cors: true
 
 plugins:
