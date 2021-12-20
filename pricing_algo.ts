@@ -116,7 +116,7 @@ const pricingAlgo = (
   pricePerHour: number,
   overwritePrice?: OverwritePrice[]
 ): number => {
-  const price = getPrice(startDateTime, endDateTime, pricePerHour);
+  const price = getPrice(new Date(startDateTime), new Date(endDateTime), pricePerHour);
 
   if (overwritePrice && Array.isArray(overwritePrice)) {
     handleOverwritePrice(overwritePrice);
@@ -144,4 +144,4 @@ const result = pricingAlgo(todayStart, todayEnd, 13, [
   },
 ]);
 
-console.log(result);
+export default pricingAlgo;

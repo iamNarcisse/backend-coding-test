@@ -1,8 +1,11 @@
-import infoResolver from './info.resolver';
+import middy from '@middy/core';
+import algoResolver from './algo.resolver';
+
+const infoHandler = middy(algoResolver);
 
 const resolvers = {
   Query: {
-    info: infoResolver,
+    getPrice: infoHandler,
   },
 };
 
