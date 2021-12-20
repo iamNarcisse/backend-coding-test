@@ -1,13 +1,6 @@
-import dotenv from 'dotenv';
-dotenv.config();
-import { GraphQLClient, gql } from 'graphql-request';
+import { gql } from 'graphql-request';
 import * as faker from 'faker';
-const client = new GraphQLClient(process.env.HASURA_ENDPOINT as string, {
-  headers: {
-    'x-hasura-admin-secret': process.env.HASURA_SECRET as string,
-    'content-type': 'application-json',
-  },
-});
+import { client } from './dev-config';
 
 const query = gql`
   mutation insert_blog($id: uuid, $title: String, $content: String, $author: String) {
