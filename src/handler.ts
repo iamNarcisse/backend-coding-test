@@ -1,7 +1,7 @@
 import middy from '@middy/core';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server-lambda';
-import { customMiddleware } from './middlewares';
+import { customMiddleware, pricingMiddleware } from './middlewares';
 import resolvers from './resolvers';
 import { typeDefs } from './schema';
 
@@ -31,6 +31,6 @@ const lambada = lambda.createHandler();
 
 const server = middy(lambada).use(customMiddleware());
 
-const pricing = middy(lambada).use(customMiddleware());
+const pricing = middy(lambada).use(pricingMiddleware());
 
 export { server, pricing };

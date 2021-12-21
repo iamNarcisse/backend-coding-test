@@ -1,7 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
 import middy from '@middy/core';
-import request from 'graphql-request';
 
 type ObjectLiteral = {
   [key: string]: any;
@@ -17,10 +16,15 @@ export const authorizationCheck = (headers: ObjectLiteral) => {
   }
 };
 
-const customMiddleware = (): middy.MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxyResult> => {
+const customMiddleware = (
+  opts = {}
+): middy.MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxyResult> => {
+  const options = { ...opts };
+
   const before: middy.MiddlewareFn<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
     request: ObjectLiteral
   ) => {
+    // authorizationCheck(request);
     // return request;
   };
 
@@ -35,7 +39,36 @@ const customMiddleware = (): middy.MiddlewareObj<APIGatewayProxyEvent, APIGatewa
 
   return {
     onError,
+    before,
   };
 };
 
-export { customMiddleware };
+const pricingMiddleware = (
+  opts = {}
+): middy.MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxyResult> => {
+  const options = { ...opts };
+
+  const before: middy.MiddlewareFn<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
+    request: ObjectLiteral
+  ) => {
+    authorizationCheck(request.event.headers);
+  };
+
+  const onError: middy.MiddlewareFn<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
+    request: ObjectLiteral
+  ) => {
+    // Todo
+
+    // Log to an external error monitoring tool
+    // Implement error class
+    // Check instance of error to hide 500 errors with more descriptive ones
+    throw new Error(request.error);
+  };
+
+  return {
+    onError,
+    before,
+  };
+};
+
+export { customMiddleware, pricingMiddleware };

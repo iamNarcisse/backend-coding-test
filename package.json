@@ -7,8 +7,6 @@
   "author": "Narcisse Egonu <mechikaegon@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node dist/src/handle.js",
-    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' ./src/handle.ts",
     "start:dev": "sls offline",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
