@@ -195,7 +195,7 @@ export const pricingAlgo = (
   overwritePrice?: OverwritePrice[]
 ): number => {
   let perHourCharge = pricePerHour;
-  if (overwritePrice && Array.isArray(overwritePrice)) {
+  if (overwritePrice && Array.isArray(overwritePrice) && overwritePrice.length) {
     perHourCharge = getPricePerHour({ startDateTime, endDateTime, pricePerHour, overwritePrice });
   }
 
