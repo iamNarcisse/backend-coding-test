@@ -1,7 +1,7 @@
-import { captureException } from '../configs/logger';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
 import middy from '@middy/core';
+import request from 'graphql-request';
 
 type ObjectLiteral = {
   [key: string]: any;
