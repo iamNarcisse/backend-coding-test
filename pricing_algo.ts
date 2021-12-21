@@ -1,5 +1,4 @@
 require('datejs');
-
 import moment from 'moment';
 
 /*
@@ -24,23 +23,33 @@ interface DateTimePayload {
 const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
 
 /**
- *
+ * Updates the pricePerHour based on a specific dateTime range
  * @param startDateTime
  * @param endDateTime
  * @returns {number} newPricePerHour based on a specific DateTime range
  */
-const getPricePerHour = (payload: DateTimePayload): number => {
-  // Todo : Work on criteria to update pricePerHour if dateRange matches a criteria
-  // For demo purposes, it will be set to false
-  const criteria = { isMet: false, pricePerHour: 120 };
+const getPricePerHour = (
+  payload: DateTimePayload & { overwritePrice: OverwritePrice[] }
+): number => {
+  let pricePerHour = 0;
 
-  if (!criteria.isMet) {
+  // Strictly falls within the daterange
+  payload.overwritePrice.forEach((item) => {
+    if (
+      payload.startDateTime.getTime() >= item.startDateTime.getTime() &&
+      payload.endDateTime.getTime() <= item.endDateTime.getTime()
+    ) {
+      pricePerHour = item.pricePerHour;
+    }
+  });
+
+  if (!pricePerHour) {
     // return original pricePerHour
     return payload.pricePerHour as number;
   }
 
   // return new price per hour
-  return criteria.pricePerHour;
+  return pricePerHour;
 };
 
 /**
@@ -68,7 +77,7 @@ export const getDayFromDateTime = (date: Date) => {
   return new Date(date).getDay();
 };
 
-const computePriceFromHour = (hour: number, pricePerHour: number) => {
+export const computePriceFromHour = (hour: number, pricePerHour: number) => {
   const fullHours = parseInt(String(hour));
   const partialHour = hour - fullHours;
   const pricePerMinute = (partialHour / 100) * pricePerHour;
@@ -89,34 +98,12 @@ export const getHourDifference = ({ startDateTime, endDateTime }: DateTimePayloa
   return hourDiff;
 };
 
-/**
- * Overwrites pricePerHour for an given startDateTime, endDateTime et pricePerHourList
- * @param arrayList
- * @returns {array}
- */
-
-const handleOverwritePrice = (arrayList: OverwritePrice[]): OverwritePrice[] | undefined => {
-  arrayList.forEach((item: OverwritePrice & { price?: number }) => {
-    const price = getPrice(
-      timezoneAware(item.startDateTime),
-      timezoneAware(item.endDateTime),
-      getPricePerHour({
-        startDateTime: item.startDateTime,
-        endDateTime: item.endDateTime,
-        pricePerHour: item.pricePerHour,
-      })
-    );
-    item.price = price;
-  });
-
-  return arrayList;
-};
-
 const timezoneAware = (date: Date | string) => {
-  return moment(moment(date).format('YYYY-MM-DDTHH:mm:ss')).toDate();
+  const dateTime = moment(date).format('YYYY-MM-DDTHH:mm:ss');
+  return new Date(dateTime).getTime();
 };
 
-const getHoursInRange = ({
+export const getHoursInRange = ({
   startDateTime,
   endDateTime,
 }: DateTimePayload): { normalHours: number; weekendHours: number } => {
@@ -207,12 +194,12 @@ export const pricingAlgo = (
   pricePerHour: number,
   overwritePrice?: OverwritePrice[]
 ): number => {
-  const price = getPrice(timezoneAware(startDateTime), timezoneAware(endDateTime), pricePerHour);
-
+  let perHourCharge = pricePerHour;
   if (overwritePrice && Array.isArray(overwritePrice)) {
-    const newOverwritePriceList = handleOverwritePrice(overwritePrice);
-    console.log(newOverwritePriceList);
+    perHourCharge = getPricePerHour({ startDateTime, endDateTime, pricePerHour, overwritePrice });
   }
+
+  const price = getPrice(startDateTime, endDateTime, perHourCharge);
 
   return price;
 };
