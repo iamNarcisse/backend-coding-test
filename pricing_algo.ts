@@ -15,7 +15,33 @@ import moment from 'moment';
 7. Use `ts-node pricing_algo` to run the pricing algorithm
 */
 
+interface DateTimePayload {
+  startDateTime: Date;
+  endDateTime: Date;
+  pricePerHour?: number;
+}
+
 const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
+
+/**
+ *
+ * @param startDateTime
+ * @param endDateTime
+ * @returns {number} newPricePerHour based on a specific DateTime range
+ */
+const getPricePerHour = (payload: DateTimePayload): number => {
+  // Todo : Work on criteria to update pricePerHour if dateRange matches a criteria
+  // For demo purposes, it will be set to false
+  const criteria = { isMet: false, pricePerHour: 120 };
+
+  if (!criteria.isMet) {
+    // return original pricePerHour
+    return payload.pricePerHour as number;
+  }
+
+  // return new price per hour
+  return criteria.pricePerHour;
+};
 
 /**
  * Checks if today is weekend
@@ -58,17 +84,27 @@ const computePriceFromHour = (hour: number, pricePerHour: number) => {
  * @returns {number} - Hours in between two dates
  */
 
-export const getHourDifference = (startDateTime: Date, endDateTime: Date): number => {
+export const getHourDifference = ({ startDateTime, endDateTime }: DateTimePayload): number => {
   const hourDiff = Math.abs(endDateTime.getTime() - startDateTime.getTime()) / HOUR_IN_MILLISECONDS;
   return hourDiff;
 };
+
+/**
+ * Overwrites pricePerHour for an given startDateTime, endDateTime et pricePerHourList
+ * @param arrayList
+ * @returns {array}
+ */
 
 const handleOverwritePrice = (arrayList: OverwritePrice[]): OverwritePrice[] | undefined => {
   arrayList.forEach((item: OverwritePrice & { price?: number }) => {
     const price = getPrice(
       timezoneAware(item.startDateTime),
       timezoneAware(item.endDateTime),
-      item.pricePerHour
+      getPricePerHour({
+        startDateTime: item.startDateTime,
+        endDateTime: item.endDateTime,
+        pricePerHour: item.pricePerHour,
+      })
     );
     item.price = price;
   });
@@ -80,10 +116,10 @@ const timezoneAware = (date: Date | string) => {
   return moment(moment(date).format('YYYY-MM-DDTHH:mm:ss')).toDate();
 };
 
-const getHoursInRange = (
-  startDateTime: Date,
-  endDateTime: Date
-): { normalHours: number; weekendHours: number } => {
+const getHoursInRange = ({
+  startDateTime,
+  endDateTime,
+}: DateTimePayload): { normalHours: number; weekendHours: number } => {
   let weekendHours = 0;
 
   /**
@@ -100,22 +136,28 @@ const getHoursInRange = (
     return { normalHours: hours, weekendHours };
   }
 
-  // Either of the dates are weekends
+  // Booking is on the same date and date falls on weekend
+  if (getDayFromDateTime(startDateTime) === getDayFromDateTime(endDateTime)) {
+    const hours = Math.abs(endDateTime.getTime() - startDateTime.getTime()) / HOUR_IN_MILLISECONDS;
+    return { normalHours: hours, weekendHours: hours };
+  }
+
+  // Either of the dates is weekend
   if (isWeekend(startDateTime)) {
-    //State date ends
     const startDateEndsConfig = { hour: 23, minute: 59, second: 59 };
     const startDateTimeEnds = Date.parse(startDateTime.toString()).at(startDateEndsConfig as any);
-    const hourDiff = getHourDifference(startDateTime, startDateTimeEnds);
+    const hourDiff = getHourDifference({ startDateTime, endDateTime: startDateTimeEnds });
 
-    // Price should be doubled since on a weekend
+    // Computes weekend hours
     weekendHours = weekendHours + hourDiff;
   }
 
-  //
   if (isWeekend(endDateTime)) {
     const endDateStartsConfig = { hour: 0, minute: 0, second: 0 };
     const endDateTimeStarts = Date.parse(endDateTime.toString()).at(endDateStartsConfig as any);
-    const hourDiff = getHourDifference(endDateTimeStarts, endDateTime);
+    const hourDiff = getHourDifference({ startDateTime: endDateTimeStarts, endDateTime });
+
+    // Computes weekend hours
     weekendHours = weekendHours + hourDiff;
   }
 
@@ -126,7 +168,7 @@ const getHoursInRange = (
   ) {
     const dayStarts = new Date().at({ hour: 0, minute: 0, second: 0 } as any);
     const dayEnds = new Date().at({ hour: 23, minute: 59, second: 59 } as any);
-    const saturdayHours = getHourDifference(dayEnds, dayStarts);
+    const saturdayHours = getHourDifference({ startDateTime: dayEnds, endDateTime: dayStarts });
     weekendHours = weekendHours + saturdayHours;
   }
 
@@ -136,8 +178,16 @@ const getHoursInRange = (
   return { normalHours, weekendHours };
 };
 
+/**
+ *
+ * @param startDateTime - {Date}
+ * @param endDateTime - {Date}
+ * @param pricePerHour - {number}
+ * @returns {number} Price for a given startDateTime, endDateTime et pricePerHour
+ */
+
 const getPrice = (startDateTime: Date, endDateTime: Date, pricePerHour: number): number => {
-  const { normalHours, weekendHours } = getHoursInRange(startDateTime, endDateTime);
+  const { normalHours, weekendHours } = getHoursInRange({ startDateTime, endDateTime });
 
   return (
     computePriceFromHour(normalHours, pricePerHour) +
@@ -160,19 +210,15 @@ export const pricingAlgo = (
   const price = getPrice(timezoneAware(startDateTime), timezoneAware(endDateTime), pricePerHour);
 
   if (overwritePrice && Array.isArray(overwritePrice)) {
-    // handleOverwritePrice(overwritePrice);
-    // console.log(newOverwritePriceList);
+    const newOverwritePriceList = handleOverwritePrice(overwritePrice);
+    console.log(newOverwritePriceList);
   }
 
   return price;
 };
 
-const todayStart = new Date('2021-12-24T12:01:00');
-const todayEnd = new Date('2021-12-26T12:01:00');
-
 // new Date('2021-11-13T09:24:00'), new Date('2021-11-15T15:13:00')
-
-const result = pricingAlgo(todayStart, todayEnd, 13, [
+const result = pricingAlgo(new Date('2021-11-13T09:24:00'), new Date('2021-11-15T15:13:00'), 10, [
   {
     startDateTime: new Date('2021-11-14T12:00:00'),
     endDateTime: new Date('2021-11-14T14:01:00'),
