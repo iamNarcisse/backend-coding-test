@@ -1,33 +1,30 @@
 import { captureException } from '../configs/logger';
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
-const defaults = {};
+import middy from '@middy/core';
 
 type ObjectLiteral = {
   [key: string]: any;
 };
 
-const customMiddleware = (opts = {}) => {
-  const options = { ...defaults, ...opts };
+const customMiddleware = (): middy.MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxyResult> => {
+  const before: middy.MiddlewareFn<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
+    request: ObjectLiteral
+  ) => {
+    // return request;
+  };
 
-  const authenticateMiddleware = async (request: any) => {
-    // might read options
-  };
-  const customMiddlewareAfter = async (request: {}) => {
-    // might read options
-  };
-  const errorTracking = async (request: ObjectLiteral) => {
-    console.log(request.error, 'Log error to sentry=======>');
+  const onError: middy.MiddlewareFn<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
+    request: ObjectLiteral
+  ): Promise<void> => {
     captureException(request.error, {
       extra: request.context,
     });
-
-    return request;
   };
 
   return {
-    before: authenticateMiddleware,
-    after: customMiddlewareAfter,
-    onError: errorTracking,
+    before,
+    onError,
   };
 };
 

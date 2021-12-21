@@ -1,4 +1,4 @@
-import pricingAlgo from '../../pricing_algo';
+import pricingAlgo from '../../../pricing_algo';
 import { Context as LambdaContext } from 'aws-lambda';
 
 interface OverwritePrice {
@@ -14,7 +14,7 @@ interface ComputePrice extends LambdaContext {
   overWritePrice?: OverwritePrice[];
 }
 
-const algoResolver = async (parent: any, args: ComputePrice) => {
+const algoResolver = async (parent: any, args: ComputePrice, context: LambdaContext | any) => {
   const price = pricingAlgo(
     args.startDateTime,
     args.endDateTime,

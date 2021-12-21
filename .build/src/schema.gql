@@ -1,7 +1,5 @@
 type Query {
-  info: String!
   getPrice(startDateTime: String!, endDateTime: String!, pricePerHour: Int!): Float!
-  posts(after: Int!, count: Int!): [Post!]!
   searchPost(title: String!, content: String!): [Post!]
   getPosts(first: Int!): PaginationResponse!
 }
@@ -30,4 +28,10 @@ type TableEdge {
 type PaginationResponse {
   pageInfo: PageInfo!
   edges: [TableEdge!]
+}
+
+type OverwritePrice {
+  startDateTime: String!
+  endDateTime: String!
+  pricePerHour: Int!
 }

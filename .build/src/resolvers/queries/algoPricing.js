@@ -12,10 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const pricing_algo_1 = __importDefault(require("../../pricing_algo"));
-const algoResolver = (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
+const pricing_algo_1 = __importDefault(require("../../../pricing_algo"));
+const algoResolver = (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
     const price = (0, pricing_algo_1.default)(args.startDateTime, args.endDateTime, args.pricePerHour, args.overWritePrice);
     return price;
 });
 exports.default = algoResolver;
-//# sourceMappingURL=algo.resolver.js.map
+//# sourceMappingURL=algoPricing.js.map

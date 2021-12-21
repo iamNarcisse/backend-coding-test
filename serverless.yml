@@ -20,21 +20,20 @@ provider:
     SENTRY_DSN: https://0ade560ebdc04f69a305240f7d05b318@o395758.ingest.sentry.io/5841524
 
 functions:
+  blog:
+    handler: src/handler.server
+    events:
+      - http:
+          path: query
+          method: any
+          cors: true
   pricing:
     handler: src/handler.server
     events:
       - http:
-          path: /price
-          method: post
+          path: price
+          method: any
           cors: true
-  search:
-    handler: src/handler.server
-    events:
-      - http:
-          path: /posts
-          method: post
-          cors: true
-
 plugins:
   - serverless-offline
   - serverless-plugin-typescript

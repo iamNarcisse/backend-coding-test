@@ -1,18 +1,12 @@
-import middy from '@middy/core';
-import algoResolver from './algo.resolver';
-import searchPostResolver from './searchPost';
-import { customMiddleware } from '../middlewares';
-import paginationResolver from './pagination';
-
-const getPriceHandler = middy(algoResolver);
-
-const searchPostHandler = middy(searchPostResolver).use(customMiddleware());
+import getPrice from './queries/algoPricing';
+import getPosts from './queries/pagination';
+import searchPost from './queries/searchPost';
 
 const resolvers = {
   Query: {
-    getPrice: getPriceHandler,
-    searchPost: searchPostHandler,
-    getPosts: paginationResolver,
+    getPrice,
+    searchPost,
+    getPosts,
   },
 };
 

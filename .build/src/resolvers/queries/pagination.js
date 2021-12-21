@@ -10,29 +10,40 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const graphql_request_1 = require("graphql-request");
-const dev_config_1 = require("../../dev-config");
-const searchPost = (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
-    const myclient = (0, dev_config_1.client)(process.env.HASURA_ENDPOINT, process.env.HASURA_SECRET);
+const dev_config_1 = require("../../../dev-config");
+const paginationResolver = (event, args) => __awaiter(void 0, void 0, void 0, function* () {
+    const myclient = (0, dev_config_1.client)(process.env.HASURA_RELAY_ENDPOINT, process.env.HASURA_SECRET);
     try {
         const query = (0, graphql_request_1.gql) `
-      query query($title: String!, $content: String!) {
-        blog(where: { _or: [{ title: { _ilike: $title } }, { content: { _ilike: $content } }] }) {
-          id
-          title
-          content
-          author
-          created_at
-          updated_at
+      query relay_query($first: Int!) {
+        blog_connection(first: $first, order_by: { created_at: desc }) {
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+          edges {
+            cursor
+            node {
+              id
+              title
+              content
+              author
+              created_at
+              updated_at
+            }
+          }
         }
       }
     `;
-        const variables = { content: `%${args.content}%`, title: `%${args.title}%` };
+        const variables = { first: args.first };
         const response = yield myclient.request(query, variables);
-        return response.blog;
+        return response.blog_connection;
     }
     catch (error) {
         throw error;
     }
 });
-exports.default = searchPost;
-//# sourceMappingURL=searchPost.js.map
+exports.default = paginationResolver;
+//# sourceMappingURL=pagination.js.map

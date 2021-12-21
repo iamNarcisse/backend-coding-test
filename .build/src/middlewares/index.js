@@ -11,26 +11,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.customMiddleware = void 0;
 const logger_1 = require("../configs/logger");
-const defaults = {};
-const customMiddleware = (opts = {}) => {
-    const options = Object.assign(Object.assign({}, defaults), opts);
-    const authenticateMiddleware = (request) => __awaiter(void 0, void 0, void 0, function* () {
-        // might read options
+const customMiddleware = () => {
+    const before = (request) => __awaiter(void 0, void 0, void 0, function* () {
+        // return request;
     });
-    const customMiddlewareAfter = (request) => __awaiter(void 0, void 0, void 0, function* () {
-        // might read options
-    });
-    const errorTracking = (request) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log(request.error, 'Log error to sentry=======>');
+    const onError = (request) => __awaiter(void 0, void 0, void 0, function* () {
         (0, logger_1.captureException)(request.error, {
             extra: request.context,
         });
-        return request;
     });
     return {
-        before: authenticateMiddleware,
-        after: customMiddlewareAfter,
-        onError: errorTracking,
+        before,
+        onError,
     };
 };
 exports.customMiddleware = customMiddleware;
