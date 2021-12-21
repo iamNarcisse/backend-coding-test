@@ -13,11 +13,11 @@ require('datejs');
 6. You may use the library of your choice for date manipulation but DayJS is recommended
 7. Use `ts-node pricing_algo` to run the pricing algorithm
 */
+const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
 /**
  * Checks if today is weekend
  * @returns {boolean} true | false based on the day of the week
  */
-const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
 const isWeekend = (date = new Date()) => {
     switch (date.getDate()) {
         case Date.FRIDAY:

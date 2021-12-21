@@ -13,14 +13,13 @@ require('datejs');
 7. Use `ts-node pricing_algo` to run the pricing algorithm
 */
 
+const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
+
 /**
  * Checks if today is weekend
  * @returns {boolean} true | false based on the day of the week
  */
-
-const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
-
-const isWeekend = (date: Date = new Date()) => {
+export const isWeekend = (date: Date = new Date()) => {
   switch (date.getDate()) {
     case Date.FRIDAY:
     case Date.SATURDAY:
@@ -39,7 +38,7 @@ const computePriceFromHour = (hour: number, pricePerHour: number) => {
 
   return Number(price.toFixed(2));
 };
-const getHourDifference = (startDateTime: Date, endDateTime: Date): number => {
+export const getHourDifference = (startDateTime: Date, endDateTime: Date): number => {
   const hourDiff = Math.abs(endDateTime.getTime() - startDateTime.getTime()) / HOUR_IN_MILLISECONDS;
   return hourDiff;
 };
@@ -110,7 +109,7 @@ interface OverwritePrice {
   pricePerHour: number;
 }
 
-const pricingAlgo = (
+export const pricingAlgo = (
   startDateTime: Date,
   endDateTime: Date,
   pricePerHour: number,
