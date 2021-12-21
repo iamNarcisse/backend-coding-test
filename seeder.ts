@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 import * as faker from 'faker';
-import { client } from './dev-config';
+import { client } from './src/dev-config';
 
 const myclient = client(process.env.HASUNA_ENDPOINT as string, process.env.HASUNA_SECRET as string);
 const query = gql`

@@ -1,18 +1,16 @@
+import middy from '@middy/core';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server-lambda';
-import fs from 'fs';
-import path from 'path';
-import resolvers from './resolvers';
-
-import middy from '@middy/core';
 import { customMiddleware } from './middlewares';
+import resolvers from './resolvers';
+import { typeDefs } from './schema';
 
-const typeDefPath = path.join(__dirname, 'schema.gql') as string;
+const NODE_ENV = process.env.NODE_ENV;
 
-const typeDefs = fs.readFileSync(typeDefPath, 'utf8');
+const IS_DEV = !NODE_ENV || !['production'].includes(NODE_ENV);
 
 const lambda = new ApolloServer({
-  typeDefs,
+  typeDefs: typeDefs,
   resolvers,
 
   context: ({ event, context, express }) => {
@@ -25,6 +23,7 @@ const lambda = new ApolloServer({
     };
   },
 
+  introspection: true,
   plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
 });
 
@@ -32,4 +31,6 @@ const lambada = lambda.createHandler();
 
 const server = middy(lambada).use(customMiddleware());
 
-export { server };
+const pricing = middy(lambada).use(customMiddleware());
+
+export { server, pricing };

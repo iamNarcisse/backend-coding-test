@@ -1,5 +1,5 @@
 import { gql } from 'graphql-request';
-import { client } from '../../../dev-config';
+import { client } from '../../dev-config';
 import { LambdaContext, ObjectLiteral } from '../../types';
 
 interface PaginationQueryParams {

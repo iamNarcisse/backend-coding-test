@@ -1,7 +1,7 @@
-import { captureException } from '../configs/logger';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
 import middy from '@middy/core';
+import request from 'graphql-request';
 
 type ObjectLiteral = {
   [key: string]: any;
@@ -9,7 +9,7 @@ type ObjectLiteral = {
 
 export const authorizationCheck = (headers: ObjectLiteral) => {
   const bearerToken = headers?.Authorization;
-  if (!bearerToken) throw 'No token';
+  if (!bearerToken) throw new Error('You are not authorized to access this resource');
   const bearer = bearerToken.split(' ');
 
   if (bearer[1] !== process.env.PUBLIC_KEY) {

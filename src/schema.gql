@@ -1,11 +1,5 @@
 type Query {
-  getPrice(
-    startDateTime: String!
-    endDateTime: String!
-    pricePerHour: Int!
-    overwritePrice: OverwritePrice[]!
-  ): Float!
-  posts(after: Int!, count: Int!): [Post!]!
+  getPrice(startDateTime: String!, endDateTime: String!, pricePerHour: Int!): Float!
   searchPost(title: String!, content: String!): [Post!]
   getPosts(first: Int!): PaginationResponse!
 }
