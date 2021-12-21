@@ -11,6 +11,12 @@
 
 `yarn deploy`
 
+## Test
+
+- To tests locally, run `yarn test`
+
+- Visit https://github.com/iamNarcisse/backend-coding-test/actions for all automated tests
+
 ## Deployment links
 
 ## Endpoints
