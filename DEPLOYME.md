@@ -1,15 +1,12 @@
 ## Setup
 
-- sls deploy
+- Clone repo and run `yarn`
+- Run `npm install -g serverless` if serverless not yet installed
 
 ## Usage
 
 - To test it locally with serverless-offline by running:
   `yarn start:dev`
-
-- To deploy via serveless run
-
-`yarn deploy`
 
 ## Test
 
@@ -17,7 +14,11 @@
 
 - Visit https://github.com/iamNarcisse/backend-coding-test/actions for all automated tests
 
-## Deployment links
+## Deployment
+
+- To deploy via serveless run
+
+`yarn deploy`
 
 ## Endpoints
 
