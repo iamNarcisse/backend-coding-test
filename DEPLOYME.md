@@ -15,9 +15,13 @@
 
 ## Endpoints
 
-- POST - https://0fswu32yvj.execute-api.us-east-1.amazonaws.com/dev/query
-- GET - https://0fswu32yvj.execute-api.us-east-1.amazonaws.com/dev/query
-- ANY - https://0fswu32yvj.execute-api.us-east-1.amazonaws.com/dev/price
+- POST - https://0fswu32yvj.execute-api.us-east-1.amazonaws.com/dev/blog
+- ANY - https://0fswu32yvj.execute-api.us-east-1.amazonaws.com/dev/pricing
+
+## Interactions
+
+- Pricing route requires authorization
+- Set 6jsfuAHYuwcqKbOVPdnAp2Gxy62cLF8VXdpIcc07Bj as Bearer Token
 
 ## Functions
 

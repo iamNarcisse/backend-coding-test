@@ -27,18 +27,14 @@ functions:
     handler: src/handler.server
     events:
       - http:
-          path: query
-          method: post
-          cors: true
-      - http:
-          path: query
-          method: get
+          path: blog
+          method: any
           cors: true
   pricing:
-    handler: src/handler.server
+    handler: src/handler.pricing
     events:
       - http:
-          path: price
+          path: pricing
           method: any
           cors: true
 plugins:

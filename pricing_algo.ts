@@ -36,8 +36,9 @@ const getPricePerHour = (
   // Strictly falls within the daterange
   payload.overwritePrice.forEach((item) => {
     if (
-      payload.startDateTime.getTime() >= item.startDateTime.getTime() &&
-      payload.endDateTime.getTime() <= item.endDateTime.getTime()
+      timezoneAware(payload.startDateTime).getTime() >=
+        timezoneAware(item.startDateTime).getTime() &&
+      timezoneAware(payload.endDateTime).getTime() <= timezoneAware(item.endDateTime).getTime()
     ) {
       pricePerHour = item.pricePerHour;
     }
@@ -100,7 +101,7 @@ export const getHourDifference = ({ startDateTime, endDateTime }: DateTimePayloa
 
 const timezoneAware = (date: Date | string) => {
   const dateTime = moment(date).format('YYYY-MM-DDTHH:mm:ss');
-  return new Date(dateTime).getTime();
+  return new Date(dateTime);
 };
 
 /**
@@ -179,7 +180,10 @@ export const getHoursInRange = ({
  */
 
 const getPrice = (startDateTime: Date, endDateTime: Date, pricePerHour: number): number => {
-  const { normalHours, weekendHours } = getHoursInRange({ startDateTime, endDateTime });
+  const { normalHours, weekendHours } = getHoursInRange({
+    startDateTime: timezoneAware(startDateTime),
+    endDateTime: timezoneAware(endDateTime),
+  });
 
   return (
     computePriceFromHour(normalHours, pricePerHour) +
@@ -201,7 +205,12 @@ export const pricingAlgo = (
 ): number => {
   let perHourCharge = pricePerHour;
   if (overwritePrice && Array.isArray(overwritePrice) && overwritePrice.length) {
-    perHourCharge = getPricePerHour({ startDateTime, endDateTime, pricePerHour, overwritePrice });
+    perHourCharge = getPricePerHour({
+      startDateTime,
+      endDateTime,
+      pricePerHour,
+      overwritePrice,
+    });
   }
 
   const price = getPrice(startDateTime, endDateTime, perHourCharge);

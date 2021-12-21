@@ -37,4 +37,6 @@ const lambada = lambda.createHandler();
 
 const server = middy(lambada).use(customMiddleware());
 
-export { server };
+const pricing = middy(lambada).use(customMiddleware());
+
+export { server, pricing };
