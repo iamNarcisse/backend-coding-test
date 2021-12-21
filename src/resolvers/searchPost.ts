@@ -5,10 +5,10 @@ interface SearchPostQuery extends LambdaContext {
   title: string;
   content: string;
 }
-const searchPost = async (parent: any, context: SearchPostQuery) => {
+const searchPost = async (parent: any, args: SearchPostQuery) => {
   const myclient = client(
-    process.env.HASUNA_ENDPOINT as string,
-    process.env.HASUNA_SECRET as string
+    process.env.HASURA_ENDPOINT as string,
+    process.env.HASURA_SECRET as string
   );
 
   try {
@@ -25,7 +25,7 @@ const searchPost = async (parent: any, context: SearchPostQuery) => {
       }
     `;
 
-    const variables = { content: `%${context.content}%`, title: `%${context.title}%` };
+    const variables = { content: `%${args.content}%`, title: `%${args.title}%` };
     const response = await myclient.request(query, variables);
 
     return response.blog;

@@ -7,14 +7,14 @@ interface OverwritePrice {
   pricePerHour: number;
 }
 
-interface ComputePrice {
+interface ComputePrice extends LambdaContext {
   startDateTime: Date;
   endDateTime: Date;
   pricePerHour: number;
   overWritePrice?: OverwritePrice[];
 }
 
-const algoResolver = async (_: unknown, args: ComputePrice, context: LambdaContext) => {
+const algoResolver = async (parent: any, args: ComputePrice) => {
   const price = pricingAlgo(
     args.startDateTime,
     args.endDateTime,

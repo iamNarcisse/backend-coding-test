@@ -1,17 +1,18 @@
 import middy from '@middy/core';
 import algoResolver from './algo.resolver';
-// import validator from '@middy/validator';
 import searchPostResolver from './searchPost';
 import { customMiddleware } from '../middlewares';
+import paginationResolver from './pagination';
 
-const infoHandler = algoResolver;
+const getPriceHandler = middy(algoResolver);
 
-const searchHandler = middy(searchPostResolver).use(customMiddleware());
+const searchPostHandler = middy(searchPostResolver).use(customMiddleware());
 
 const resolvers = {
   Query: {
-    getPrice: infoHandler,
-    searchPost: searchHandler,
+    getPrice: getPriceHandler,
+    searchPost: searchPostHandler,
+    getPosts: paginationResolver,
   },
 };
 
