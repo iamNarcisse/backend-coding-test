@@ -3,7 +3,7 @@ import {
   getHourDifference,
   computePriceFromHour,
   getHoursInRange,
-} from '../pricing_algo';
+} from '../src/pricing_algo';
 
 const params = {
   startDateTime: new Date('2021-12-19T12:00:00'),

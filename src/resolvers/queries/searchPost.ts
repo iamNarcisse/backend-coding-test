@@ -1,5 +1,5 @@
 import { gql } from 'graphql-request';
-import { client } from '../../../dev-config';
+import { client } from '../../dev-config';
 import { Context as LambdaContext } from 'aws-lambda';
 import { ObjectLiteral } from '../../types';
 interface SearchPostQuery extends LambdaContext {

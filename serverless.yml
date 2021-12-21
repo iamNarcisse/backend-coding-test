@@ -37,6 +37,7 @@ functions:
           path: pricing
           method: any
           cors: true
+
 plugins:
   - serverless-offline
   - serverless-plugin-typescript

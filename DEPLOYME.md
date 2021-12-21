@@ -15,8 +15,8 @@
 
 ## Endpoints
 
-- POST - https://0fswu32yvj.execute-api.us-east-1.amazonaws.com/dev/blog
-- ANY - https://0fswu32yvj.execute-api.us-east-1.amazonaws.com/dev/pricing
+- https://0fswu32yvj.execute-api.us-east-1.amazonaws.com/dev/blog
+- https://0fswu32yvj.execute-api.us-east-1.amazonaws.com/dev/pricing
 
 ## Interactions
 

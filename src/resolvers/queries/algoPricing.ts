@@ -1,4 +1,4 @@
-import pricingAlgo from '../../../pricing_algo';
+import pricingAlgo from '../../pricing_algo';
 import { Context as LambdaContext } from 'aws-lambda';
 import { authorizationCheck } from '../../middlewares';
 import { LamdaFunctionNames, ObjectLiteral } from '../../types';
