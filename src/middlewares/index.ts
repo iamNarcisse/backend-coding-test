@@ -51,7 +51,8 @@ const pricingMiddleware = (
   const before: middy.MiddlewareFn<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
     request: ObjectLiteral
   ) => {
-    authorizationCheck(request.event.headers);
+    // console.log(request.event);
+    // authorizationCheck(request.event.headers);
   };
 
   const onError: middy.MiddlewareFn<APIGatewayProxyEvent, APIGatewayProxyResult> = async (

@@ -21,6 +21,8 @@ const algoResolver = async (parent: any, args: ComputePrice, context: ObjectLite
     throw new Error('Route not allowed');
   }
 
+  authorizationCheck(context.headers);
+
   const price = pricingAlgo(
     args.startDateTime,
     args.endDateTime,
