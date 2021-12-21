@@ -103,6 +103,11 @@ const timezoneAware = (date: Date | string) => {
   return new Date(dateTime).getTime();
 };
 
+/**
+ *
+ * @param param - An object containing the startDateTime and endDateTime
+ * @returns {object} Containing the normalHours and weekendHours computed from a date range
+ */
 export const getHoursInRange = ({
   startDateTime,
   endDateTime,
@@ -204,7 +209,6 @@ export const pricingAlgo = (
   return price;
 };
 
-// new Date('2021-11-13T09:24:00'), new Date('2021-11-15T15:13:00')
 const result = pricingAlgo(new Date('2021-11-13T09:24:00'), new Date('2021-11-15T15:13:00'), 10, [
   {
     startDateTime: new Date('2021-11-14T12:00:00'),
