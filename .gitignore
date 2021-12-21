@@ -24,3 +24,10 @@ yarn-error.log*
 .env.production.local
 
 
+/dist
+.env
+dist
+/.serverless
+/.build
+/.serverless
+/coverage

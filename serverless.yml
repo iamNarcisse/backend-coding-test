@@ -1,0 +1,43 @@
+org: iamnarcisse
+app: stayr-backend-test
+name: aws-lambda-starter
+# component: aws-lambda
+
+service: serverless-api
+
+provider:
+  name: aws # deploy to AWS
+  # stage: dev
+  runtime: nodejs12.x
+  timeout: 15
+  versionFunctions: false # disable function versioning
+  region: us-east-1 # AWS region
+  apiGateway:
+    shouldStartNameWithService: true
+  environment:
+    HASURA_ENDPOINT: ${param:HASURA_ENDPOINT}
+    HASURA_SECRET: ${param:HASURA_SECRET}
+    HASURA_RELAY_ENDPOINT: ${param:HASURA_RELAY_ENDPOINT}
+    SENTRY_DSN: ${param:SENTRY_DSN}
+    PUBLIC_KEY: ${param:PUBLIC_KEY}
+    NODE_ENV: ${param:NODE_ENV}
+
+functions:
+  blog:
+    handler: src/handler.server
+    events:
+      - http:
+          path: blog
+          method: any
+          cors: true
+  pricing:
+    handler: src/handler.pricing
+    events:
+      - http:
+          path: pricing
+          method: any
+          cors: true
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-typescript
