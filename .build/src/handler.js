@@ -27,7 +27,7 @@ const lambda = new apollo_server_lambda_1.ApolloServer({
     },
     plugins: [(0, apollo_server_core_1.ApolloServerPluginLandingPageGraphQLPlayground)()],
 });
-const ser = lambda.createHandler();
-const server = (0, core_1.default)(ser).use((0, middlewares_1.customMiddleware)());
+const lambada = lambda.createHandler();
+const server = (0, core_1.default)(lambada).use((0, middlewares_1.customMiddleware)());
 exports.server = server;
 //# sourceMappingURL=handler.js.map

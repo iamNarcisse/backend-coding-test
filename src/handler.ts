@@ -28,8 +28,8 @@ const lambda = new ApolloServer({
   plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
 });
 
-const ser = lambda.createHandler();
+const lambada = lambda.createHandler();
 
-const server = middy(ser).use(customMiddleware());
+const server = middy(lambada).use(customMiddleware());
 
 export { server };
