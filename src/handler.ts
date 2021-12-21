@@ -11,6 +11,10 @@ const typeDefPath = path.join(__dirname, 'schema.gql') as string;
 
 const typeDefs = fs.readFileSync(typeDefPath, 'utf8');
 
+const NODE_ENV = process.env.NODE_ENV;
+
+const IS_DEV = !NODE_ENV || !['production'].includes(NODE_ENV);
+
 const lambda = new ApolloServer({
   typeDefs,
   resolvers,
@@ -25,6 +29,7 @@ const lambda = new ApolloServer({
     };
   },
 
+  introspection: IS_DEV,
   plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
 });
 

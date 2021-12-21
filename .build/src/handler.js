@@ -13,6 +13,8 @@ const core_1 = __importDefault(require("@middy/core"));
 const middlewares_1 = require("./middlewares");
 const typeDefPath = path_1.default.join(__dirname, 'schema.gql');
 const typeDefs = fs_1.default.readFileSync(typeDefPath, 'utf8');
+const NODE_ENV = process.env.NODE_ENV;
+const IS_DEV = !NODE_ENV || !['production'].includes(NODE_ENV);
 const lambda = new apollo_server_lambda_1.ApolloServer({
     typeDefs,
     resolvers: resolvers_1.default,
@@ -25,6 +27,7 @@ const lambda = new apollo_server_lambda_1.ApolloServer({
             expressRequest: express.req,
         };
     },
+    introspection: IS_DEV,
     plugins: [(0, apollo_server_core_1.ApolloServerPluginLandingPageGraphQLPlayground)()],
 });
 const lambada = lambda.createHandler();

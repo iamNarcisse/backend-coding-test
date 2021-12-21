@@ -30,3 +30,4 @@ dist
 /.serverless
 /.build
 /.serverless
+/coverage
