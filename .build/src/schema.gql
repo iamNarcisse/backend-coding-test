@@ -13,6 +13,11 @@ type Post {
   updated_at: String
 }
 
+type PaginationResponse {
+  pageInfo: PageInfo!
+  edges: [TableEdge!]
+}
+
 type PageInfo {
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
@@ -23,11 +28,6 @@ type PageInfo {
 type TableEdge {
   cursor: String!
   node: Post
-}
-
-type PaginationResponse {
-  pageInfo: PageInfo!
-  edges: [TableEdge!]
 }
 
 type OverwritePrice {

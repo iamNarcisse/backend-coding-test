@@ -14,10 +14,10 @@ provider:
   apiGateway:
     shouldStartNameWithService: true
   environment:
-    HASURA_ENDPOINT: https://moving-platypus-43.hasura.app/v1/graphql
-    HASURA_SECRET: 6jsfuAHYuwcqKbOVPdnAp2Gxy62cLF8VXdpIcc07Bj5cYRpQY8pv2WnSucUL0ZVq
-    HASURA_RELAY_ENDPOINT: https://moving-platypus-43.hasura.app/v1beta1/relay
-    SENTRY_DSN: https://0ade560ebdc04f69a305240f7d05b318@o395758.ingest.sentry.io/5841524
+    HASURA_ENDPOINT: ${param:HASURA_ENDPOINT}
+    HASURA_SECRET: ${param:HASURA_SECRET}
+    HASURA_RELAY_ENDPOINT: ${param:HASURA_RELAY_ENDPOINT}
+    SENTRY_DSN: ${param:SENTRY_DSN}
 
 functions:
   blog:
