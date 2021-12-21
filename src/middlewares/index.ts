@@ -7,6 +7,16 @@ type ObjectLiteral = {
   [key: string]: any;
 };
 
+export const authorizationCheck = (headers: ObjectLiteral) => {
+  const bearerToken = headers?.Authorization;
+  if (!bearerToken) throw 'No token';
+  const bearer = bearerToken.split(' ');
+
+  if (bearer[1] !== process.env.PUBLIC_KEY) {
+    throw new Error('You are not authorized to access this resource');
+  }
+};
+
 const customMiddleware = (): middy.MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxyResult> => {
   const before: middy.MiddlewareFn<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
     request: ObjectLiteral
@@ -16,14 +26,14 @@ const customMiddleware = (): middy.MiddlewareObj<APIGatewayProxyEvent, APIGatewa
 
   const onError: middy.MiddlewareFn<APIGatewayProxyEvent, APIGatewayProxyResult> = async (
     request: ObjectLiteral
-  ): Promise<void> => {
-    captureException(request.error, {
-      extra: request.context,
-    });
+  ) => {
+    // Todo
+    // Log to an external error monitoring tool
+    // Check instance of error to hide runtime error
+    throw new Error(request.error);
   };
 
   return {
-    before,
     onError,
   };
 };

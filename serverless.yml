@@ -18,6 +18,7 @@ provider:
     HASURA_SECRET: ${param:HASURA_SECRET}
     HASURA_RELAY_ENDPOINT: ${param:HASURA_RELAY_ENDPOINT}
     SENTRY_DSN: ${param:SENTRY_DSN}
+    PUBLIC_KEY: ${param:PUBLIC_KEY}
 
 functions:
   blog:

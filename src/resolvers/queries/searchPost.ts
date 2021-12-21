@@ -1,11 +1,12 @@
 import { gql } from 'graphql-request';
 import { client } from '../../../dev-config';
 import { Context as LambdaContext } from 'aws-lambda';
+import { ObjectLiteral } from '../../types';
 interface SearchPostQuery extends LambdaContext {
   title: string;
   content: string;
 }
-const searchPost = async (parent: any, args: SearchPostQuery) => {
+const searchPost = async (parent: ObjectLiteral, args: SearchPostQuery) => {
   const myclient = client(
     process.env.HASURA_ENDPOINT as string,
     process.env.HASURA_SECRET as string

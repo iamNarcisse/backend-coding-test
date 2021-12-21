@@ -1,11 +1,14 @@
 import { gql } from 'graphql-request';
 import { client } from '../../../dev-config';
-import { LambdaContext } from '../../types';
+import { LambdaContext, ObjectLiteral } from '../../types';
 
 interface PaginationQueryParams {
   first: number;
 }
-const paginationResolver = async (event: any, args: PaginationQueryParams & LambdaContext) => {
+const paginationResolver = async (
+  event: ObjectLiteral,
+  args: PaginationQueryParams & LambdaContext
+) => {
   const myclient = client(
     process.env.HASURA_RELAY_ENDPOINT as string,
     process.env.HASURA_SECRET as string

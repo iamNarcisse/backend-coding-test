@@ -1,5 +1,7 @@
 import pricingAlgo from '../../../pricing_algo';
 import { Context as LambdaContext } from 'aws-lambda';
+import { authorizationCheck } from '../../middlewares';
+import { LamdaFunctionNames, ObjectLiteral } from '../../types';
 
 interface OverwritePrice {
   startDateTime: Date;
@@ -14,7 +16,13 @@ interface ComputePrice extends LambdaContext {
   overWritePrice?: OverwritePrice[];
 }
 
-const algoResolver = async (parent: any, args: ComputePrice, context: LambdaContext | any) => {
+const algoResolver = async (parent: any, args: ComputePrice, context: ObjectLiteral) => {
+  if (context.functionName !== LamdaFunctionNames.PRICING) {
+    throw new Error('Route not allowed');
+  }
+
+  authorizationCheck(context.headers);
+
   const price = pricingAlgo(
     args.startDateTime,
     args.endDateTime,

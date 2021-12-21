@@ -13,7 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const pricing_algo_1 = __importDefault(require("../../../pricing_algo"));
+const middlewares_1 = require("../../middlewares");
+const types_1 = require("../../types");
 const algoResolver = (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
+    if (context.functionName !== types_1.LamdaFunctionNames.PRICING) {
+        throw new Error('Route not allowed');
+    }
+    (0, middlewares_1.authorizationCheck)(context.headers);
     const price = (0, pricing_algo_1.default)(args.startDateTime, args.endDateTime, args.pricePerHour, args.overWritePrice);
     return price;
 });

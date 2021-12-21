@@ -9,19 +9,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.customMiddleware = void 0;
-const logger_1 = require("../configs/logger");
+exports.customMiddleware = exports.authorizationCheck = void 0;
+const authorizationCheck = (headers) => {
+    const bearerToken = headers === null || headers === void 0 ? void 0 : headers.Authorization;
+    if (!bearerToken)
+        throw 'No token';
+    const bearer = bearerToken.split(' ');
+    if (bearer[1] !== process.env.PUBLIC_KEY) {
+        throw new Error('You are not authorized to access this resource');
+    }
+};
+exports.authorizationCheck = authorizationCheck;
 const customMiddleware = () => {
     const before = (request) => __awaiter(void 0, void 0, void 0, function* () {
         // return request;
     });
     const onError = (request) => __awaiter(void 0, void 0, void 0, function* () {
-        (0, logger_1.captureException)(request.error, {
-            extra: request.context,
-        });
+        // Todo
+        // Log to an external error monitoring tool
+        // Check instance of error to hide runtime error
+        throw new Error(request.error);
     });
     return {
-        before,
         onError,
     };
 };
