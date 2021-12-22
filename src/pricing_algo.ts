@@ -1,5 +1,5 @@
 require('datejs');
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 /*
 1. Write a pricing algorithm function that takes in a start DateTime, end DateTime, price per hour and returns the total price for the duration.
@@ -100,7 +100,7 @@ export const getHourDifference = ({ startDateTime, endDateTime }: DateTimePayloa
 };
 
 const timezoneAware = (date: Date | string) => {
-  const dateTime = moment(date).format('YYYY-MM-DDTHH:mm:ss');
+  const dateTime = dayjs(date).format('YYYY-MM-DDTHH:mm:ss');
   return new Date(dateTime);
 };
 
@@ -230,5 +230,7 @@ const result = pricingAlgo(new Date('2021-11-13T09:24:00'), new Date('2021-11-15
     pricePerHour: 15.2,
   },
 ]);
+
+console.log(result);
 
 export default pricingAlgo;
