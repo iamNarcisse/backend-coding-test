@@ -10,7 +10,7 @@
     "start:dev": "sls offline",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
-    "deploy":"serverless deploy"
+    "deploy": "serverless deploy"
   },
   "dependencies": {
     "@middy/core": "^2.5.3",
@@ -24,11 +24,11 @@
     "apollo-server-core": "^3.5.0",
     "apollo-server-lambda": "^3.5.0",
     "datejs": "^1.0.0-rc3",
+    "dayjs": "^1.10.7",
     "graphql": "^14.6.0",
     "graphql-request": "^3.7.0",
     "graphql-tag": "^2.12.6",
-    "graphql-yoga": "^1.18.3",
-    "moment": "^2.29.1"
+    "graphql-yoga": "^1.18.3"
   },
   "devDependencies": {
     "@types/faker": "^5.5.9",
