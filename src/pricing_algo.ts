@@ -1,4 +1,3 @@
-require('datejs');
 import dayjs from 'dayjs';
 
 /*
@@ -18,178 +17,8 @@ interface DateTimePayload {
   startDateTime: Date;
   endDateTime: Date;
   pricePerHour?: number;
+  overwritePrice?: OverwritePrice[];
 }
-
-const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
-
-/**
- * Updates the pricePerHour based on a specific dateTime range
- * @param startDateTime
- * @param endDateTime
- * @returns {number} newPricePerHour based on a specific DateTime range
- */
-const getPricePerHour = (
-  payload: DateTimePayload & { overwritePrice: OverwritePrice[] }
-): number => {
-  let pricePerHour = 0;
-
-  // Strictly falls within the daterange
-  payload.overwritePrice.forEach((item) => {
-    if (
-      timezoneAware(payload.startDateTime).getTime() >=
-        timezoneAware(item.startDateTime).getTime() &&
-      timezoneAware(payload.endDateTime).getTime() <= timezoneAware(item.endDateTime).getTime()
-    ) {
-      pricePerHour = item.pricePerHour;
-    }
-  });
-
-  if (!pricePerHour) {
-    // return original pricePerHour
-    return payload.pricePerHour as number;
-  }
-
-  // return new price per hour
-  return pricePerHour;
-};
-
-/**
- * Checks if today is weekend
- * @returns {boolean} true | false based on the day of the week
- */
-export const isWeekend = (date: Date = new Date()) => {
-  switch (date.getDay()) {
-    case Date.FRIDAY:
-    case Date.SATURDAY:
-    case Date.SUNDAY:
-      return true;
-    default:
-      return false;
-  }
-};
-
-/**
- *
- * @param date {Date}
- * @returns {number} - Day of the week
- */
-
-export const getDayFromDateTime = (date: Date) => {
-  return new Date(date).getDay();
-};
-
-export const computePriceFromHour = (hour: number, pricePerHour: number) => {
-  const fullHours = parseInt(String(hour));
-  const partialHour = hour - fullHours;
-  const pricePerMinute = (partialHour / 100) * pricePerHour;
-  const price = fullHours * pricePerHour + pricePerMinute * 100;
-
-  return Number(price.toFixed(2));
-};
-
-/**
- *
- * @param startDateTime
- * @param endDateTime
- * @returns {number} - Hours in between two dates
- */
-
-export const getHourDifference = ({ startDateTime, endDateTime }: DateTimePayload): number => {
-  const hourDiff = Math.abs(endDateTime.getTime() - startDateTime.getTime()) / HOUR_IN_MILLISECONDS;
-  return hourDiff;
-};
-
-const timezoneAware = (date: Date | string) => {
-  const dateTime = dayjs(date).format('YYYY-MM-DDTHH:mm:ss');
-  return new Date(dateTime);
-};
-
-/**
- *
- * @param param - An object containing the startDateTime and endDateTime
- * @returns {object} Containing the normalHours and weekendHours computed from a date range
- */
-export const getHoursInRange = ({
-  startDateTime,
-  endDateTime,
-}: DateTimePayload): { normalHours: number; weekendHours: number } => {
-  let weekendHours = 0;
-
-  /**
-   * Prevent startDateTime from being after endDateTime
-   */
-  if (startDateTime.isAfter(endDateTime)) {
-    throw new Error(`Start date ${startDateTime} must not before end date ${endDateTime}`);
-  }
-
-  // Check if both dates are not weekends
-  if (!isWeekend(startDateTime) && !isWeekend(endDateTime)) {
-    // Get time differnence
-    const hours = Math.abs(endDateTime.getTime() - startDateTime.getTime()) / HOUR_IN_MILLISECONDS;
-    return { normalHours: hours, weekendHours };
-  }
-
-  // Booking is on the same date and date falls on weekend
-  if (getDayFromDateTime(startDateTime) === getDayFromDateTime(endDateTime)) {
-    const hours = Math.abs(endDateTime.getTime() - startDateTime.getTime()) / HOUR_IN_MILLISECONDS;
-    return { normalHours: hours, weekendHours: hours };
-  }
-
-  // Either of the dates is weekend
-  if (isWeekend(startDateTime)) {
-    const startDateEndsConfig = { hour: 23, minute: 59, second: 59 };
-    const startDateTimeEnds = Date.parse(startDateTime.toString()).at(startDateEndsConfig as any);
-    const hourDiff = getHourDifference({ startDateTime, endDateTime: startDateTimeEnds });
-
-    // Computes weekend hours
-    weekendHours = weekendHours + hourDiff;
-  }
-
-  if (isWeekend(endDateTime)) {
-    const endDateStartsConfig = { hour: 0, minute: 0, second: 0 };
-    const endDateTimeStarts = Date.parse(endDateTime.toString()).at(endDateStartsConfig as any);
-    const hourDiff = getHourDifference({ startDateTime: endDateTimeStarts, endDateTime });
-
-    // Computes weekend hours
-    weekendHours = weekendHours + hourDiff;
-  }
-
-  //Compute hours in a saturday
-  if (
-    getDayFromDateTime(startDateTime) === Date.FRIDAY &&
-    getDayFromDateTime(endDateTime) === Date.SUNDAY
-  ) {
-    const dayStarts = new Date().at({ hour: 0, minute: 0, second: 0 } as any);
-    const dayEnds = new Date().at({ hour: 23, minute: 59, second: 59 } as any);
-    const saturdayHours = getHourDifference({ startDateTime: dayEnds, endDateTime: dayStarts });
-    weekendHours = weekendHours + saturdayHours;
-  }
-
-  // Get time difference
-  const normalHours =
-    Math.abs(endDateTime.getTime() - startDateTime.getTime()) / HOUR_IN_MILLISECONDS;
-  return { normalHours, weekendHours };
-};
-
-/**
- *
- * @param startDateTime - {Date}
- * @param endDateTime - {Date}
- * @param pricePerHour - {number}
- * @returns {number} Price for a given startDateTime, endDateTime et pricePerHour
- */
-
-const getPrice = (startDateTime: Date, endDateTime: Date, pricePerHour: number): number => {
-  const { normalHours, weekendHours } = getHoursInRange({
-    startDateTime: timezoneAware(startDateTime),
-    endDateTime: timezoneAware(endDateTime),
-  });
-
-  return (
-    computePriceFromHour(normalHours, pricePerHour) +
-    computePriceFromHour(weekendHours, pricePerHour)
-  );
-};
 
 interface OverwritePrice {
   startDateTime: Date;
@@ -197,28 +26,192 @@ interface OverwritePrice {
   pricePerHour: number;
 }
 
+/**
+ * Checks if today is weekend
+ * @returns {boolean} true | false based on the day of the week
+ */
+export const isWeekend = (date: Date) => {
+  switch (dayjs(date).day()) {
+    case 0:
+    case 6:
+      return true;
+    default:
+      return false;
+  }
+};
+
+export const pricePerHourToMinutes = (pricePerHour: number) => {
+  return pricePerHour / 60;
+};
+
+export const getStartDateTimeCost = (payload: DateTimePayload) => {
+  const timeInMinutes = dayjs(payload.startDateTime)
+    .endOf('day')
+    .diff(dayjs(payload.startDateTime), 'minute');
+
+  let price = pricePerHourToMinutes(payload.pricePerHour as number);
+
+  if (isWeekend(payload.startDateTime)) {
+    price = price * 2;
+  }
+
+  const cost = timeInMinutes * price;
+
+  return Number(cost.toFixed(2));
+};
+
+export const getEndDateTimeCost = (payload: DateTimePayload) => {
+  const timeInMinutes = dayjs(payload.endDateTime).diff(
+    dayjs(payload.endDateTime).startOf('day'),
+    'minute'
+  );
+
+  let overWriteMins = 0;
+
+  let overWriteCost = 0;
+
+  //Override
+
+  payload.overwritePrice?.forEach((item) => {
+    if (
+      dayjs(item.startDateTime).isBefore(dayjs(payload.endDateTime)) &&
+      dayjs(item.endDateTime).isAfter(dayjs(payload.endDateTime))
+    ) {
+      overWriteMins = dayjs(payload.endDateTime).diff(dayjs(item.startDateTime), 'minute');
+
+      let price = pricePerHourToMinutes(item.pricePerHour as number);
+
+      if (isWeekend(item.endDateTime)) {
+        // price = price * 2;
+      }
+      overWriteCost = overWriteMins * price;
+    }
+  });
+
+  const normalMins = timeInMinutes - overWriteMins;
+
+  let price = pricePerHourToMinutes(payload.pricePerHour as number);
+
+  if (isWeekend(payload.endDateTime)) {
+    price = price * 2;
+  }
+
+  const normalTimeCost = normalMins * price;
+
+  const newCost = normalTimeCost + overWriteCost;
+
+  return Number(newCost.toFixed(2));
+};
+
+export const computeRestOfDaysCost = (payload: DateTimePayload) => {
+  // Get days between two dateTimes
+
+  let answerCost = 0;
+  let nextDateTimeStart = dayjs(payload.startDateTime).endOf('day').add(1, 'second');
+  let nextDateTimeEnds = dayjs(nextDateTimeStart).endOf('day');
+
+  const totalMins = dayjs(nextDateTimeEnds).diff(nextDateTimeStart, 'minute');
+
+  let overWriteMins = 0;
+
+  let overWriteCost = 0;
+
+  payload?.overwritePrice?.forEach((item) => {
+    if (
+      dayjs(item.startDateTime).isAfter(dayjs(nextDateTimeStart)) &&
+      dayjs(item.endDateTime).isBefore(dayjs(nextDateTimeEnds))
+    ) {
+      overWriteMins = dayjs(item.endDateTime).diff(dayjs(item.startDateTime), 'minute');
+
+      let price = pricePerHourToMinutes(item.pricePerHour as number);
+
+      if (isWeekend(item.endDateTime)) {
+        // price = price * 2;
+      }
+      overWriteCost = overWriteMins * price;
+    }
+  });
+
+  const restOfDayMins = totalMins - overWriteMins;
+
+  let restOfDayPrice = pricePerHourToMinutes(payload.pricePerHour as number);
+
+  if (isWeekend(dayjs(nextDateTimeStart).toDate())) {
+    restOfDayPrice = restOfDayPrice * 2;
+  }
+
+  const restOfDayCost = restOfDayMins * restOfDayPrice;
+
+  answerCost = restOfDayCost + overWriteCost;
+
+  return {
+    cost: Number(answerCost.toFixed(2)),
+    startDateTime: nextDateTimeStart,
+    endDateTime: nextDateTimeEnds,
+  };
+};
+
+export const onTheSameDay = (payload: DateTimePayload) => {
+  const timeInMinutes = dayjs(payload.endDateTime).diff(dayjs(payload.startDateTime), 'minute');
+
+  let price = pricePerHourToMinutes(payload.pricePerHour as number);
+
+  if (isWeekend(new Date(payload.startDateTime))) {
+    price = price * 2;
+  }
+  return timeInMinutes * price;
+};
+
+export const computePrice = (payload: DateTimePayload) => {
+  if (dayjs(payload.startDateTime).isSame(dayjs(payload.endDateTime))) {
+    throw new Error('Datetime must not be same');
+  }
+
+  if (dayjs(payload.startDateTime).isAfter(dayjs(payload.endDateTime))) {
+    throw new Error('Start date time  must be in the past');
+  }
+
+  // Bokking on THE SAME DAY
+
+  if (dayjs(payload.startDateTime).day() === dayjs(payload.endDateTime).day()) {
+    return onTheSameDay(payload);
+  }
+
+  const firstDayCost = getStartDateTimeCost(payload);
+  const lastDayCost = getEndDateTimeCost(payload);
+
+  let restOfDayCost = 0;
+
+  const numOfDays = dayjs(payload.endDateTime).diff(dayjs(payload.startDateTime), 'days');
+
+  let count = numOfDays;
+
+  while (count > 1) {
+    const result = computeRestOfDaysCost(payload);
+    payload.startDateTime = result.startDateTime.toDate();
+    payload.endDateTime = result.endDateTime.toDate();
+
+    restOfDayCost = restOfDayCost + result.cost;
+
+    count--;
+  }
+
+  return Number((firstDayCost + lastDayCost + restOfDayCost).toFixed(2));
+};
+
 export const pricingAlgo = (
   startDateTime: Date,
   endDateTime: Date,
   pricePerHour: number,
   overwritePrice?: OverwritePrice[]
 ): number => {
-  let perHourCharge = pricePerHour;
-  if (overwritePrice && Array.isArray(overwritePrice) && overwritePrice.length) {
-    perHourCharge = getPricePerHour({
-      startDateTime,
-      endDateTime,
-      pricePerHour,
-      overwritePrice,
-    });
-  }
-
-  const price = getPrice(startDateTime, endDateTime, perHourCharge);
+  const price = computePrice({ startDateTime, endDateTime, pricePerHour, overwritePrice });
 
   return price;
 };
 
-const result = pricingAlgo(new Date('2021-11-13T09:24:00'), new Date('2021-11-15T15:13:00'), 10, [
+export default pricingAlgo;
+const result = pricingAlgo(new Date('2021-11-08T09:24:00'), new Date('2021-11-12T09:24:00'), 10, [
   {
     startDateTime: new Date('2021-11-14T12:00:00'),
     endDateTime: new Date('2021-11-14T14:01:00'),
@@ -232,5 +225,3 @@ const result = pricingAlgo(new Date('2021-11-13T09:24:00'), new Date('2021-11-15
 ]);
 
 console.log(result);
-
-export default pricingAlgo;
